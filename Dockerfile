@@ -61,7 +61,7 @@ RUN apk --no-cache add --update \
         # /usr/local/etc/tor/torrc.sample
 
 FROM alpine:latest
-MAINTAINER Christian chriswayg@gmail.com
+MAINTAINER BlueT - Matthew Lien <bluet@bluet.org>
 
 # If no Nickname is set, a random string will be added to 'Tor4'
 ENV TOR_USER=tord \

@@ -1,16 +1,19 @@
 version: '2.2'
 services:
   relay:
-    image: chriswayg/tor-alpine
+    image: bluet/tor-relay-proxy
     init: true
     restart: always
     network_mode: host
+    env_file:
+      - ./.env
     ## the ports are not needed with network_mode host
     #ports:
       #- "9001:9001"
       #- "9030:9030"
-      #- "54444:54444"
+      #- "9050:9050"
       #- "7002:7002"
+      #- "54444:54444"
     volumes:
       ## mount and DataDirectory and custom `torrc` here
       - ./tor-data/:/var/lib/tor/
@@ -18,3 +21,4 @@ services:
       ## alternatively mount previously saved identity keys here
       #- ./tests/tor-data/keys/secret_id_key:/var/lib/tor/keys/secret_id_key
       #- ./tests/tor-data/keys/ed25519_master_id_secret_key:/var/lib/tor/keys/secret_id_key
+
