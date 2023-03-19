@@ -71,10 +71,13 @@ ControlSocket 0
 
 #### Run Tor with a mounted `torrc` configuration
 
-Mount your customized `torrc` from the current directory of the host into the container with this command:
+Modify your Tor configuration:
 ```
 nano torrc
+```
 
+Then mount your customized `torrc` from the current directory of the host into the container with this command:
+```
 mkdir -vp tor-data && \
 docker run -d --init --name=tor-server_relay_1 --net=host \
 -e TOR_NICKNAME=Tor4 \
@@ -206,7 +209,7 @@ systemctl enable docker
 systemctl start docker
 ```
 
-Please use the latest Docker engine available and do not use the engine that ships with your distro's repository.
+Please use the latest Docker engine available and do not use the possibly outdated engine that ships with your distro's repository.
 
 ### Guides
 
@@ -217,7 +220,7 @@ Please use the latest Docker engine available and do not use the engine that shi
 - [obfs4 - The obfourscator - Github](https://github.com/Yawning/obfs4)
 - [How to use the “meek” pluggable transport](https://blog.torproject.org/how-use-meek-pluggable-transport)
 - [meek-server for Tor meek bridge](https://github.com/arlolra/meek/tree/master/meek-server)
-- Originally based on: https://github.com/vimagick/dockerfiles/tree/master/tor
+- Originally based on: https://github.com/vimagick/dockerfiles/tree/master/tor and https://github.com/chriswayg/tor-alpine
 
 ### License:
  - MIT
