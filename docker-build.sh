@@ -2,7 +2,7 @@
 
 VERSION=0.1.`date +%s`
 
-docker build --no-cache --pull -t bluet/tor-relay-proxy .
+docker build --pull -t bluet/tor-relay-proxy .
 docker scan bluet/tor-relay-proxy:latest
 
 docker tag bluet/tor-relay-proxy:latest bluet/tor-relay-proxy:v${VERSION}
