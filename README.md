@@ -1,11 +1,13 @@
-## Tor Relay Server on Docker (Alpine)
+## A small Tor Relay Server with obfs4proxy on Alpine Linux in Docker (Alpine)
+
 [![Build Status](https://travis-ci.org/chriswayg/tor-alpine.svg?branch=master)](https://travis-ci.org/chriswayg/tor-alpine)
 [![](https://images.microbadger.com/badges/image/chriswayg/tor-alpine.svg)](https://microbadger.com/images/chriswayg/tor-alpine)
 
 #### A complete, efficient and secure Tor relay server Docker image
-*This docker image, when rebuilt, will update automatically to the latest Alpine base image and install the latest current stable version of Tor server. It will run Tor as an unprivileged regular user, as recommended by torproject.org.*
 
-It includes the latest Tor Alpine package from torproject.org which is installed and configured according the Tor project recommendations. Additionally it can be run as a hidden bridge using and obfs4proxy as well as meek.
+*This docker image, when rebuilt, will update automatically to the latest Alpine base image and install the latest current stable version of the Tor server. It will run Tor as an unprivileged regular user, as recommended by torproject.org.*
+
+It includes the latest Tor Alpine package from torproject.org which is installed and configured according to the Tor project recommendations. Additionally, it can be run as a hidden bridge using obfs4proxy as well as meek.
 
 The Tor network relies on volunteers to donate bandwidth. The more people who run relays, the faster the Tor network will be. If you have at least 2 megabits/s for both upload and download, please help out Tor by configuring your server to be a Tor relay too.
 
@@ -22,9 +24,10 @@ state security.
 
 ### Quickstart - Tor relay server in minutes
 
-- Prerequisites: A [Linux server hosted at a Tor friendly ISP](https://trac.torproject.org/projects/tor/wiki/doc/GoodBadISPs) with Docker installed (see [Install Docker and Docker Compose](#install-docker-and-docker-compose) below)
+- Prerequisites: A [Linux server hosted at a Tor-friendly ISP](https://trac.torproject.org/projects/tor/wiki/doc/GoodBadISPs) with Docker installed (see [Install Docker and Docker Compose](#install-docker-and-docker-compose) below)
 
 Create a directory for your Tor server data. Then set your own Nickname (only letters and numbers) and an optional contact Email (which will be published on the Tor network) using environment variables:
+
 ```
 mkdir -vp tor-data && \
 docker run -d --init --name=tor-server_relay_1 --net=host \
@@ -34,16 +37,18 @@ docker run -d --init --name=tor-server_relay_1 --net=host \
 --restart=always chriswayg/tor-alpine
 ```
 
-This command will run a Tor relay server with a safe default configuration (not as an exit node). The server will autostart after restarting the host system. If you do not change the default Nickname 'Tor4', the startup script will add a randomized, pronouncable suffix to create a unique name. All Tor data will be preserved in the mounted Data Directory, even if you upgrade or remove the container.
+This command will run a Tor relay server with a safe default configuration (not as an exit node). The server will autostart after restarting the host system. If you do not change the default Nickname 'Tor4', the startup script will add a randomized, pronounceable suffix to create a unique name. All Tor data will be preserved in the mounted Data Directory, even if you upgrade or remove the container.
 
 Check with ```docker logs -f tor-server_relay_1```  If you see the message: ```[notice] Self-testing indicates your ORPort is reachable from the outside. Excellent. Publishing server descriptor.``` at the bottom after a while, your server started successfully. Then wait a bit longer and search for your server here: [Relay Search](https://metrics.torproject.org/rs.html)
 
 ### Customize Tor configuration
-You may want to configure additional options to control your monthly data usage, or to run Tor as a hidden obfuscated bridge. Look at the Tor manual with all [Configuration File Options](https://www.torproject.org/docs/tor-manual.html.en). Also refer to a recent fully commented `torrc.sample`:
+
+You may want to configure additional options to control your monthly data usage, or to run Tor as a hidden obfuscated bridge. Look at the Tor manual with all [Configuration File Options](https://www.torproject.org/docs/tor-manual.html.en). Also, refer to the recently fully commented `torrc.sample`:
 
 `docker cp tor-server_relay_1:/usr/local/etc/tor/torrc.sample ./`
 
-For customisation copy `torrc` to the host and configure the desired settings.
+For customization copy `torrc` to the host and configure the desired settings.
+
 ```
 ##=================== /etc/torrc =====================##
 # Run Tor as a regular user (do not change this)
@@ -72,11 +77,13 @@ ControlSocket 0
 #### Run Tor with a mounted `torrc` configuration
 
 Modify your Tor configuration:
+
 ```
 nano torrc
 ```
 
 Then mount your customized `torrc` from the current directory of the host into the container with this command:
+
 ```
 mkdir -vp tor-data && \
 docker run -d --init --name=tor-server_relay_1 --net=host \
@@ -89,14 +96,16 @@ docker run -d --init --name=tor-server_relay_1 --net=host \
 
 ### Move or upgrade the Tor relay
 
-When upgrading your Tor relay, or moving it on a different computer, the important part is to keep the same identity keys. Keeping backups of the identity keys so you can restore a relay in the future is the recommended way to ensure the reputation of the relay won't be wasted.
+When upgrading your Tor relay, or moving it to a different computer, the important part is to keep the same identity keys. Keeping backups of the identity keys so you can restore a relay in the future is the recommended way to ensure the reputation of the relay won't be wasted.
 
 ```
 mkdir -vp tor-data/keys/ && \
 docker cp tor-server_relay_1:/var/lib/tor/keys/secret_id_key ./tor-data/keys/ && \
 docker cp tor-server_relay_1:/var/lib/tor/keys/ed25519_master_id_secret_key ./tor-data/keys/
 ```
+
 You can also reuse these identity keys from a previous Tor relay server installation, to continue with the same Fingerprint and ID, by inserting the following lines, in the previous command:
+
 ```
 -v $PWD/tor-data/keys/secret_id_key:/var/lib/tor/keys/secret_id_key \
 -v $PWD/tor-data/keys/ed25519_master_id_secret_key:/var/lib/tor/ed25519_master_id_secret_key \
@@ -104,7 +113,8 @@ You can also reuse these identity keys from a previous Tor relay server installa
 
 ### Run Tor using docker-compose (recommended)
 
-Adapt the example `docker-compose.yml` with your settings or clone it from [Github](https://github.com/chriswayg/tor-alpine).
+Adapt the example `docker-compose.yml` with your settings or clone it from [GitHub](https://github.com/chriswayg/tor-alpine).
+
 ```
 version: '2.2'
 services:
@@ -125,24 +135,28 @@ services:
 ##### Configure and run the Tor relay server
 
 - Configure the `docker-compose.yml` and optionally the `torrc` file, with your individual settings. Possibly install `git` first.
+
 ```
 cd /opt && git clone https://github.com/chriswayg/tor-alpine.git && cd tor-alpine
 nano docker-compose.yml
 ```
 
 - Start a new instance of the Tor relay server and display the logs.
+
 ```
 docker-compose up -d
 docker-compose logs -f
 ```
 
 - As examples for running commands in the container, show the current fingerprint or enter a bash shell.
+
 ```
 docker-compose exec -T relay cat /var/lib/tor/fingerprint
 docker-compose exec relay bash
 ```
 
-- Enter a container which is restarting with an error to inspect it
+- Enter a container that's restarting with an error, to inspect it
+
 ```
 docker run -it --entrypoint=/bin/sh chriswayg/tor-alpine --login
 ```
@@ -168,7 +182,9 @@ nano /etc/docker/daemon.json
 systemctl restart docker && systemctl status docker
 ```
 
-My sample Tor relay server configurations use `network_mode: host` which makes it easier to use IPv6. - Next make your Tor relay reachable via IPv6 by adding the applicable IPv6 address at the ORPort line in your `torrc` configuration:
+My sample Tor relay server configurations use `network_mode: host` which makes it easier to use IPv6.
+
+- Next, make your Tor relay reachable via IPv6 by adding the applicable IPv6 address at the ORPort line in your `torrc` configuration:
 
 `ORPort [IPv6-address]:9001`
 
@@ -177,6 +193,7 @@ Or use the included helper script to add the main IPv6 address of your host to y
 `bash scripts/set-ipv6-in-torrc.sh torrc`
 
 - Restart the container and test, that the Tor relay can reach the outside world:
+
 ```
 docker-compose restart
 docker-compose logs
@@ -191,13 +208,13 @@ You should see something like this in the log: `[notice] Opening OR listener on 
     3. [Basic Configuration of Docker Engine with IPv6](http://www.debug-all.com/?p=128)
     4. [Docker, IPv6 and –net=”host”](http://www.debug-all.com/?p=163)
     5. [Docker Networking 101 – Host mode](http://www.dasblinkenlichten.com/docker-networking-101-host-mode/)
-    5. When using the host network driver for a container, that container’s network stack is not isolated from the Docker host. If you run a container which binds to port 9001 and you use host networking, the container’s application will be available on port 9001 on the host’s IP address.
+    5. When using the host network driver for a container, that container’s network stack is not isolated from the Docker host. If you run a container that binds to port 9001 and you use host networking, the container’s application will be available on port 9001 on the host’s IP address.
 
 ---
 
 ### Install Docker and Docker Compose
 
-Links how to install
+Links on how to install
 
 - [Docker](https://docs.docker.com/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
@@ -216,15 +233,17 @@ Please use the latest Docker engine available and do not use the possibly outdat
 - [Tor Relay Guide](https://trac.torproject.org/projects/tor/wiki/TorRelayGuide)
 - [Tor on Debian Installation Instructions](https://www.torproject.org/docs/debian.html.en)
 - [Torproject - git repo](https://github.com/torproject/tor)
-- [obfs4proxy on Debian - Guide to run an obfuscated bridge to help censored users connect to the Tor network.](https://trac.torproject.org/projects/tor/wiki/doc/PluggableTransports/obfs4proxy)
-- [obfs4 - The obfourscator - Github](https://github.com/Yawning/obfs4)
+- Guide for running an obfuscated bridge to help censored users connect to the Tor network. [Relay Operations - Bridge](https://community.torproject.org/relay/setup/bridge/)
+- [obfs4 - The obfuscator - Github](https://github.com/Yawning/obfs4)
 - [How to use the “meek” pluggable transport](https://blog.torproject.org/how-use-meek-pluggable-transport)
 - [meek-server for Tor meek bridge](https://github.com/arlolra/meek/tree/master/meek-server)
-- Originally based on: https://github.com/vimagick/dockerfiles/tree/master/tor and https://github.com/chriswayg/tor-alpine
+- Originally based on: <https://github.com/vimagick/dockerfiles/tree/master/tor> and <https://github.com/chriswayg/tor-alpine>
 
-### License:
- - MIT
+### License
+
+- MIT
 
 ##### For a very similar image based on tor-alpine use `chriswayg/tor-server`
- - https://hub.docker.com/r/chriswayg/tor-server
- - https://github.com/chriswayg/tor-server
+
+- <https://hub.docker.com/r/chriswayg/tor-server>
+- <https://github.com/chriswayg/tor-server>

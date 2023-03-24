@@ -10,7 +10,7 @@ echo -e "\n========================================================"
 # If DataDirectory, identity keys or torrc is mounted here,
 # ownership needs to be changed to the TOR_USER user
 chown -Rv ${TOR_USER}:${TOR_USER} /var/lib/tor
-# fix permissions
+# to fix permissions
 chmodd 700 /var/lib/tor
 chmodf 600 /var/lib/tor
 
