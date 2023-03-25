@@ -16,19 +16,15 @@ while true; do
         esac
 done
 
-# git tag "v${VERSION}" -a -m "v${VERSION}"
-# git push
-# git push --tags
-
 # Fixes busybox trigger error https://github.com/tonistiigi/xx/issues/36#issuecomment-926876468
 docker run --privileged -it --rm tonistiigi/binfmt --install all
 
 docker buildx create --use
 
 while true; do
-        read -p "Have I Updated VERSION Info? (Is current VERSION=${VERSION} ?) [y/N]" yn
+        read -p "Build for multi-platform and push? (Have I Updated VERSION Info? Is the latest VERSION=${VERSION} ?) [y/N]" yn
         case $yn in
-                [Yy]* ) docker buildx build -t bluet/tor-relay-proxy:latest -t bluet/tor-relay-proxy:${VERSION} --platform linux/amd64,linux/arm64/v8 --pull --push .; break;;
+                [Yy]* ) docker buildx build -t bluet/tor-relay-proxy:latest -t bluet/tor-relay-proxy:${VERSION} --platform linux/amd64,linux/arm64/v8,linux/386,linux/arm/v6,linux/arm/v7,linux/ppc64le,linux/s390x --pull --push .; break;;
                 [Nn]* ) exit;;
                 * ) echo "";;
         esac
