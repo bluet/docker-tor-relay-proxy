@@ -1,17 +1,18 @@
 #!/bin/bash
 
-VERSION=0.1.`date +%s`
+TOR_VERSION=$(wget -q https://gitweb.torproject.org/tor.git/plain/ReleaseNotes -O - | grep -E -m1 '^Changes in version\s[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\s' | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*[\s]*\).*$/\1/')
+VERSION=${TOR_VERSION}-$(date +%Y%m%d-%H%M%S)
 
 docker build --pull -t bluet/tor-relay-proxy .
 docker scan bluet/tor-relay-proxy:latest
 
-docker tag bluet/tor-relay-proxy:latest bluet/tor-relay-proxy:v${VERSION}
+docker tag bluet/tor-relay-proxy:latest bluet/tor-relay-proxy:${VERSION}
 
 # ask for confirmation to push. looping unless y or n is entered
 while true ; do
-        read -p "Add new git tag v${VERSION} and push? (Have you git add and git commit already?) [y/N]" yn
+        read -p "Add new git tag ${VERSION} and push? (Have you git add and git commit already?) [y/N]" yn
         case $yn in
-                [Yy]* ) git tag "v${VERSION}" -a -m "v${VERSION}" && git push && git push --tags; break;;
+                [Yy]* ) git tag "${VERSION}" -a -m "${VERSION}" && git push && git push --tags; break;;
                 * ) break;;
         esac
 done
